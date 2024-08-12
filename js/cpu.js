@@ -6,7 +6,7 @@ class CPU {
         this.running = running;
         
         this.memory = memory;
-        this.cycles = 0;
+        // this.cycles = 0;
         this._registers = {
             PC: 0x0600, //(16bit) Program Counter, 0x0600 start address 
             SP: 0xFF,  // (8bit)  Stack Pointer
@@ -25,43 +25,6 @@ class CPU {
             1(bit) 0x02  Z  Zero
             0(bit) 0x01  C  Carry
         * */
-        
-        this.updateFlag = {
-            Negative: (value) => {
-                if(value & 0x80) this._registers.FLAG_STATUS |= 0x80;
-                else this._registers.FLAG_STATUS &= ~0x80; // reset N flag
-            },
-            
-            Overflow: (condition) => {
-                if(condition) this._registers.FLAG_STATUS |= 0x40;
-                else this._registers.FLAG_STATUS &= ~0x40; // reset V flag
-            },
-            
-            Break: (isBreak) => {
-                if (isBreak) this._registers.FLAG_STATUS |= 0x10;
-                else this._registers.FLAG_STATUS &= ~0x10; // reset B flag
-            },
-            
-            Decimal: (isDecimal) => {
-                if (isDecimal) this._registers.FLAG_STATUS |= 0x08;
-                else this._registers.FLAG_STATUS &= ~0x08; // reset D flag
-            },
-            
-            InterruptDisable: (disable) => {
-                if (disable) this._registers.FLAG_STATUS |= 0x04;
-                else this._registers.FLAG_STATUS &= ~0x04; // reset I flag
-            },
-            
-            Zero: (value) => {
-                if (value === 0) this._registers.FLAG_STATUS |= 0x02;
-                else this._registers.FLAG_STATUS &= ~0x02; // reset Z flag
-            },
-            
-            Carry: (carry) => {
-                 if (carry) this._registers.FLAG_STATUS |= 0x01;
-                 else this._registers.FLAG_STATUS &= ~0x01; // reset C flag
-            },
-        }
         
         !this.testing && console.log('run emulator for CPU 6502!');
     }
@@ -115,9 +78,19 @@ class CPU {
         return (this._registers.FLAG_STATUS & 0x80) !== 0;
     }
 
+    set negativeFlag(value) {
+        if(value & 0x80) this._registers.FLAG_STATUS |= 0x80;
+        else this._registers.FLAG_STATUS &= ~0x80; // reset N flag
+    }
+
     // Getter for Overflow flag (V)
     get overflowFlag() {
         return (this._registers.FLAG_STATUS & 0x40) !== 0;
+    }
+
+    set overflowFlag(condition) {
+        if(condition) this._registers.FLAG_STATUS |= 0x40;
+        else this._registers.FLAG_STATUS &= ~0x40; // reset V flag
     }
 
     // Getter for Break flag (B)
@@ -125,9 +98,19 @@ class CPU {
         return (this._registers.FLAG_STATUS & 0x10) !== 0;
     }
 
+    set breakFlag(isBreak) {
+        if (isBreak) this._registers.FLAG_STATUS |= 0x10;
+        else this._registers.FLAG_STATUS &= ~0x10; // reset B flag
+    }
+
     // Getter for Decimal mode flag (D)
     get decimalFlag() {
         return (this._registers.FLAG_STATUS & 0x08) !== 0;
+    }
+
+    set decimalFlag(isDecimal) {
+        if (isDecimal) this._registers.FLAG_STATUS |= 0x08;
+        else this._registers.FLAG_STATUS &= ~0x08; // reset D flag
     }
 
     // Getter for Interrupt Disable flag (I)
@@ -135,14 +118,29 @@ class CPU {
         return (this._registers.FLAG_STATUS & 0x04) !== 0;
     }
 
+    set interruptDisableFlag(disable) {
+        if (disable) this._registers.FLAG_STATUS |= 0x04;
+        else this._registers.FLAG_STATUS &= ~0x04; // reset I flag
+    }
+
     // Getter for Zero flag (Z)
     get zeroFlag() {
         return (this._registers.FLAG_STATUS & 0x02) !== 0;
     }
 
+    set zeroFlag(value) {
+        if (value === 0) this._registers.FLAG_STATUS |= 0x02;
+        else this._registers.FLAG_STATUS &= ~0x02; // reset Z flag
+    }
+
     // Getter for Carry flag (C)
     get carryFlag() {
         return (this._registers.FLAG_STATUS & 0x01) !== 0;
+    }
+
+    set carryFlag(carry) {
+        if (carry) this._registers.FLAG_STATUS |= 0x01;
+        else this._registers.FLAG_STATUS &= ~0x01; // reset C flag
     }
     // ------------------
     
