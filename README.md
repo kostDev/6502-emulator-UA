@@ -1,4 +1,5 @@
-## 6502 Emulator UA🇺🇦
+## 6502 Emulator UA🇺🇦  
+[![Unit tests](https://github.com/kostDev/6502-emulator-UA/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/kostDev/6502-emulator-UA/actions/workflows/tests.yml)
 
 A minimalist and educational 6502 CPU emulator written in JavaScript. This project is designed for learning and experimentation, focusing on the core functionality of the 6502 processor.
 
