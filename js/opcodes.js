@@ -12,7 +12,7 @@ const OPCODES = {
         t: 7,
         code: 0x00,
         run: (cpu) => {
-            cpu.updateFlag.Break(true);
+            cpu.breakFlag = true;
             cpu.running = false; // stop cpu emulation
         }
     }, // 
@@ -126,7 +126,7 @@ const OPCODES = {
         code: 0x69,
         run: (cpu) => {
             const value = cpu.fetch();
-            const carry = cpu.flagStatus & 0x01; // Get the current carry flag
+            const carry = +cpu.carryFlag// Get the current carry flag
             // Perform the addition with carry
             const result = cpu.ACC + value + carry;
             const overflow = (~(cpu.ACC ^ value) & (cpu.ACC ^ result)) & 0x80;
@@ -134,10 +134,10 @@ const OPCODES = {
             // Store the result in the accumulator, considering only the lower 8 bits
             cpu.ACC = result & 0xFF;
             
-            cpu.updateFlag.Carry(result > 0xFF);
-            cpu.updateFlag.Overflow(overflow);
-            cpu.updateFlag.Negative(cpu.ACC);
-            cpu.updateFlag.Zero(cpu.ACC);
+            cpu.carryFlag = result > 0xFF;
+            cpu.overflowFlag = overflow;
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
             
         }
     },
@@ -179,8 +179,8 @@ const OPCODES = {
         code: 0x8A,
         run: (cpu) => {
             cpu.ACC = cpu.X; // Transfer the value from register X to the accumulator
-            cpu.updateFlag.Negative(cpu.ACC);
-            cpu.updateFlag.Zero(cpu.ACC);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
         }
     },
     0x8B: "", // xaa("#i") // illegal
@@ -202,8 +202,8 @@ const OPCODES = {
         code: 0x98,
         run: (cpu) => {
             cpu.ACC = cpu.Y; // Transfer the value from register Y to the accumulator
-            cpu.updateFlag.Negative(cpu.ACC);
-            cpu.updateFlag.Zero(cpu.ACC);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
         }
     },
     0x99: "", // sta("a,y")
@@ -219,8 +219,8 @@ const OPCODES = {
         code: 0xA0,
         run: (cpu) => {
             cpu.Y = cpu.fetch(); // get next byte as value
-            cpu.updateFlag.Negative(cpu.Y);
-            cpu.updateFlag.Zero(cpu.Y);
+            cpu.negativeFlag = cpu.Y;
+            cpu.zeroFlag = cpu.Y;
         }
     },
     0xA1: "",
@@ -230,8 +230,8 @@ const OPCODES = {
         code: 0xA2,
         run: (cpu) => {
             cpu.X = cpu.fetch(); // get next byte as value
-            cpu.updateFlag.Negative(cpu.X);
-            cpu.updateFlag.Zero(cpu.X);
+            cpu.negativeFlag = cpu.X;
+            cpu.zeroFlag = cpu.X;
         }
     }, 
     0xA3: "", // lax("(d,x)") // illegal
@@ -245,8 +245,8 @@ const OPCODES = {
         code: 0xA8,
         run: (cpu) => {
             cpu.Y = cpu.ACC;  // Transfer the value from register ACC to the Y
-            cpu.updateFlag.Negative(cpu.Y);
-            cpu.updateFlag.Zero(cpu.Y);
+            cpu.negativeFlag = cpu.Y;
+            cpu.zeroFlag = cpu.Y;
         }
     },
     0xA9: {
@@ -255,8 +255,8 @@ const OPCODES = {
         code: 0xA9,
         run: (cpu) => {
             cpu.ACC = cpu.fetch(); // get next byte as value
-            cpu.updateFlag.Negative(cpu.ACC);
-            cpu.updateFlag.Zero(cpu.ACC);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
         }
     },
     0xAA: {
@@ -265,8 +265,8 @@ const OPCODES = {
         code: 0xAA,
         run: (cpu) => {
             cpu.X = cpu.ACC // get next byte as value
-            cpu.updateFlag.Negative(cpu.X);
-            cpu.updateFlag.Zero(cpu.X);
+            cpu.negativeFlag = cpu.X;
+            cpu.zeroFlag = cpu.X;
         }
     },
     0xAB: "", // lax("#i") // illegal
@@ -337,17 +337,17 @@ const OPCODES = {
         code: 0xE9,
         run: (cpu) => {
             const value = cpu.fetch();
-            const carry = cpu.flagStatus & 0x01 ? 0 : 1; // Get the current carry flag (inverted for borrow)
+            const carry = cpu.carryFlag ? 0 : 1; // Get the current carry flag (inverted for borrow)
             // Perform the subtraction with borrow
             const result = cpu.ACC - value - carry;
             const overflow = ((cpu.ACC ^ result) & (~cpu.ACC ^ value)) & 0x80;
             
             cpu.ACC = result & 0xFF;
 
-            cpu.updateFlag.Carry(result >= 0);
-            cpu.updateFlag.Overflow(overflow);
-            cpu.updateFlag.Negative(cpu.ACC);
-            cpu.updateFlag.Zero(cpu.ACC);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.overflowFlag = overflow;
+            cpu.zeroFlag = cpu.ACC;
+            cpu.carryFlag = result >= 0;
         }
     },
     0xEA: {

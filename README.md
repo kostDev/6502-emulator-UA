@@ -20,7 +20,7 @@ cd 6502-emulator-UA
 ```
 Usage
 
-To start using the emulator, simply include the emulator.js file in your project and create an instance of the Emulator class:
+To start using the emulator, simply include the js folder files in your project and create an instance of the CPU class, as example:
 
 ```js
 import Memory from "./memory";
