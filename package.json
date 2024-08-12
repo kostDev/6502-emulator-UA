@@ -1,0 +1,17 @@
+{
+  "name": "cpu-6502k",
+  "version": "1.0.0",
+  "description": "cpu-6502 emulation",
+  "main": "main.js",
+  "author": "kDev",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
