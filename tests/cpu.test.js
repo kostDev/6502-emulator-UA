@@ -156,4 +156,90 @@ describe("cpu:", () => {
             });
         });
     });
+
+    describe("flags check:", () => {
+        describe("(0x80) negativeFlag", () => {
+            test("set 42", () => {
+                cpu.negativeFlag = 42;
+                expect(cpu.negativeFlag).toBe(false);
+            })
+            test("set -42", () => {
+                cpu.negativeFlag = -42;
+                expect(cpu.negativeFlag).toBe(true);
+            })
+        });
+        describe("(0x40) overflowFlag", () => {
+            test("Subtract check(SBC) v1", () => {
+                const ACC = 0x14;
+                const carry = 1;
+                const value = 250;
+                const res = ACC - value - carry;
+                cpu.overflowFlag  = ((ACC ^ res) & (~ACC ^ value)) & 0x80;
+                expect(cpu.overflowFlag).toBe(false);
+            });
+            test("Subtract check(SBC) v2", () => {
+                const ACC = 0xFF;
+                const carry = 0;
+                const value = 128;
+                const res = ACC - value - carry;
+                cpu.overflowFlag  = ((ACC ^ res) & (~ACC ^ value)) & 0x80;
+                expect(cpu.overflowFlag).toBe(true);
+            });
+        });
+        describe("(0x10) breakFlag", () => {
+            test("true", () => {
+                cpu.breakFlag = true;
+                expect(cpu.breakFlag).toBe(true);
+            });
+            test("false", () => {
+                cpu.breakFlag = false;
+                expect(cpu.breakFlag).toBe(false);
+            });
+        });
+        describe("(0x08) decimalFlag", () => {
+            test("true", () => {
+                cpu.decimalFlag = true;
+                expect(cpu.decimalFlag).toBe(true);
+            });
+            test("false", () => {
+                cpu.breakFlag = false;
+                expect(cpu.decimalFlag).toBe(false);
+            });
+        });
+        describe("(0x04) interruptDisableFlag", () => {
+            test("true", () => {
+                cpu.interruptDisableFlag = true;
+                expect(cpu.interruptDisableFlag).toBe(true);
+            });
+            test("false", () => {
+                cpu.interruptDisableFlag = false;
+                expect(cpu.interruptDisableFlag).toBe(false);
+            });
+        });
+        describe("(0x02) zeroFlag", () => {
+            test("true", () => {
+                cpu.zeroFlag = 0;
+                expect(cpu.zeroFlag).toBe(true);
+            });
+            test("false", () => {
+                cpu.zeroFlag = 0x2A;
+                expect(cpu.zeroFlag).toBe(false);
+                cpu.zeroFlag = 0x01;
+                expect(cpu.zeroFlag).toBe(false);
+                cpu.zeroFlag = 0xFF;
+                expect(cpu.zeroFlag).toBe(false);
+            });
+        });
+        describe("(0x01) carryFlag", () => {
+            test("true", () => {
+                cpu.carryFlag = true;
+                expect(cpu.carryFlag).toBe(true);
+            });
+            test("false", () => {
+                cpu.zeroFlag = false;
+                expect(cpu.carryFlag).toBe(false);
+            });
+        });
+
+    });
 });
