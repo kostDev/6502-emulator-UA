@@ -223,7 +223,7 @@ const OPCODES = {
     },
     0x87: "", // sax("d") // illegal
     0x88: {
-        name: "DEX", // Decrement Index X by One
+        name: "DEY", // Decrement Index Y by One
         t: 2,
         code: 0x88,
         run: (cpu) => {
