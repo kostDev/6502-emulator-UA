@@ -1,9 +1,8 @@
-### Opcodes progress (21/151)
+### Opcodes progress (22/151)
 
 | Dec | Opcode |  Instruction   | Status |
 |:---:|:------:|:--------------:|:------:|
 |  0  |  0x00  |      BRK       |   ✅    |
-|  9  |  0x09  | ORA #immediate |   ✅    |
 |  9  |  0x09  | ORA #immediate |   ✅    |
 | 29  |  0x29  | AND #immediate |   ✅    |
 | 41  |  0x49  | EOR #immediate |   ✅    |
