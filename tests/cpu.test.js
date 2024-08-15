@@ -10,13 +10,11 @@ describe("memory:", () => {
     test("memory size 64kb", () => {
         expect(memory.memory.length).toBe(0x10000);
     });
-
     test("memory clear", () => {
         const clearStatus = memory.memory.filter(Boolean).every((val) => val == 0);
         expect(clearStatus).toBe(true);
     });
 });
-
 
 describe("cpu:", () => {
     let memory, cpu, params;

@@ -14,7 +14,7 @@ class Memory {
     
     // write in memory 16bit value (2byte) 
     writeWord(address, value) {
-        // devide 16bit value on 2parts in two memory 8bit cells as result store 16bit value in two 8bit memory addresses
+        // divide 16bit value on 2parts in two memory 8bit cells as result store 16bit value in two 8bit memory addresses
         this.memory[address] = value & 0xFF; // low byte
         this.memory[address+1] =  (value >> 8) & 0xFF; // high byte
     }

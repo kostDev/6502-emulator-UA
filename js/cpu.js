@@ -6,7 +6,7 @@ class CPU {
         this.running = running;
         
         this.memory = memory;
-        // this.cycles = 0;
+        this.cycles = 0;
         this._registers = {
             PC: 0x0600, //(16bit) Program Counter, 0x0600 start address 
             SP: 0xFF,  // (8bit)  Stack Pointer
@@ -165,7 +165,7 @@ class CPU {
     decode(opcode) {
         const instruction = OPCODES[opcode];
         if (instruction) {
-            // this.cycles += instruction.t; // for future game console emulation processes 
+            this.cycles += instruction.t; // for future console emulation processes
             instruction.run && instruction.run(this);
         } else throw new Error(`Unknown opcode: 0x${opcode.toString(16).toUpperCase()}`);
     }

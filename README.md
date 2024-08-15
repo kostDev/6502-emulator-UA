@@ -39,7 +39,7 @@ cpu.run();
 
 #### Roadmap
 
-	•	Implement full 6502 instruction set. Current 11/151 (256)
+	•	Implement full 6502 instruction set. Current 22/151 (256)
 	•	Add debugging tools.
 	•	Create example programs for testing and learning.
 	•	Develop a simple UI for interactive use.

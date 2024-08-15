@@ -24,7 +24,16 @@ const OPCODES = {
     0x06: "", // asl("d")
     0x07: "", // slo("d") // illegal
     0x08: "", // php_implied()
-    0x09: "", // ora("#i")
+    0x09: {
+        name: "ORA #immediate", // AND Memory with Accumulator
+        t: 2,
+        code: 0x09,
+        run: (cpu) => {
+            cpu.ACC |= cpu.fetch();
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        },
+    },
     0x0A: "", // asl_implied()
     0x0B: "", // anc("#i") // illegal
     0x0C: "", // nop("a") // illegal
@@ -56,7 +65,16 @@ const OPCODES = {
     0x26: "", // rol("d")
     0x27: "", // rla("d") // illegal
     0x28: "", // plp_implied()
-    0x29: "", // and("#i")
+    0x29: {
+        name: "AND #immediate", // AND Memory with Accumulator
+        t: 2,
+        code: 0x29,
+        run: (cpu) => {
+            cpu.ACC &= cpu.fetch();
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        },
+    },
     0x2A: "", // rol_implied()
     0x2B: "", // anc("#i") // illegal
     0x2C: "", // bit("a")
@@ -88,7 +106,16 @@ const OPCODES = {
     0x46: "", // lsr("d")
     0x47: "", // sre("d") // illegal
     0x48: "", // pha_implied()
-    0x49: "", // eor("#i")
+    0x49: {
+        name: "EOR #immediate", // AND Memory with Accumulator
+        t: 2,
+        code: 0x49,
+        run: (cpu) => {
+            cpu.ACC ^= cpu.fetch();
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        },
+    },
     0x4A: "", // lsr_implied()
     0x4B: "", // alr("#i") // illegal
     0x4C: "", // jmp("a")
@@ -167,11 +194,44 @@ const OPCODES = {
     0x81: "", // sta("(d,x)")
     0x82: "", // nop("#i") // illegal
     0x83: "", // sax("(d,x)") // illegal
-    0x84: "", // sty("d")
-    0x85: "", // sta("d")
-    0x86: "", // stx("d")
+    0x84: {
+        name: "STY zeropage", // Sore Index Y in Memory
+        t: 3,
+        code: 0x84,
+        run: (cpu) => {
+            const address = cpu.fetch();
+            cpu.memory.writeByte(address, cpu.Y);
+        }
+    },
+    0x85: {
+        name: "STA zeropage", // Store Accumulator in Memory
+        t: 3,
+        code: 0x85,
+        run: (cpu) => {
+            const address = cpu.fetch();
+            cpu.memory.writeByte(address, cpu.ACC);
+        }
+    },
+    0x86: {
+        name: "STX zeropage", // Store Index X in Memory
+        t: 3,
+        code: 0x86,
+        run: (cpu) => {
+            const address = cpu.fetch();
+            cpu.memory.writeByte(address, cpu.X);
+        }
+    },
     0x87: "", // sax("d") // illegal
-    0x88: "", // dey_implied()
+    0x88: {
+        name: "DEX", // Decrement Index X by One
+        t: 2,
+        code: 0x88,
+        run: (cpu) => {
+            cpu.Y -= 1;
+            cpu.negativeFlag = cpu.Y;
+            cpu.zeroFlag = cpu.Y;
+        }
+    },
     0x89: "", // nop("#i") // illegal
     0x8A: {
         name: "TXA", // Transfer Index X to Accumulator
@@ -188,7 +248,27 @@ const OPCODES = {
     0x8D: "", // sta("a")
     0x8E: "", // stx("a")
     0x8F: "", // sax("a") // illegal
-    0x90: "", // bcc("*+d")
+    0x90: {
+        name: "BCC", // Branch if Carry Clear
+        t: 2,
+        code: 0x90,
+        run: (cpu) => {
+            const offset = cpu.fetch(); // Fetch the offset from memory
+            // Check if the Carry flag is clear
+            if (!cpu.carryFlag) {
+                // Calculate the new program counter (PC) considering the offset
+                const newPC = cpu.PC + (offset >= 0x80 ? offset - 0x100 : offset);
+                // Add 1 cycle if the branch is taken
+                cpu.cycles++;
+                // Add 1 more cycle if the branch crosses a page boundary
+                if ((cpu.PC & 0xFF00) !== (newPC & 0xFF00)) {
+                    cpu.cycles++;
+                }
+                // Update the program counter (PC) to the new address
+                cpu.PC = newPC;
+            }
+        }
+    },
     0x91: "", // sta("(d),y")
     0x92: "", // stp_implied() // illegal
     0x93: "", // ahx("(d),y") // illegal
@@ -298,9 +378,27 @@ const OPCODES = {
     0xC5: "", // cmp("d")
     0xC6: "", // dec("d")
     0xC7: "", // dcp("d") // illegal
-    0xC8: "", // iny_implied()
+    0xC8: {
+        name: "INY", // Increment Index Y by One
+        t: 2,
+        code: 0xC8,
+        run: (cpu) => {
+            cpu.Y += 1;
+            cpu.negativeFlag = cpu.Y;
+            cpu.zeroFlag = cpu.Y;
+        }
+    },
     0xC9: "", // cmp("#i")
-    0xCA: "", // dex_implied()
+    0xCA: {
+        name: "DEX", // Decrement Index X by One
+        t: 2,
+        code: 0xCA,
+        run: (cpu) => {
+            cpu.X -= 1;
+            cpu.negativeFlag = cpu.X;
+            cpu.zeroFlag = cpu.X;
+        }
+    },
     0xCB: "", // axs("#i") // illegal
     0xCC: "",
     0xCD: "",
@@ -330,7 +428,16 @@ const OPCODES = {
     0xE5: "",
     0xE6: "",
     0xE7: "", // isc("d") // illegal
-    0xE8: "",
+    0xE8: {
+        name: "INX", // Increment Index X by One
+        t: 2,
+        code: 0xE8,
+        run: (cpu) => {
+            cpu.X += 1;
+            cpu.negativeFlag = cpu.X;
+            cpu.zeroFlag = cpu.X;
+        }
+    },
     0xE9: {
         name: "SBC #immediate", // Subtract Memory from Accumulator with Borrow
         t: 2,
