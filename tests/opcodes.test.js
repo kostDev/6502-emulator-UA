@@ -1,4 +1,4 @@
-import {describe, expect, test, beforeEach} from "@jest/globals";
+import {describe, expect, test, beforeEach, jest} from "@jest/globals";
 
 import Memory from "../js/memory";
 import CPU from "../js/cpu";
@@ -249,6 +249,39 @@ describe("OPCODES:", () => {
             expect(cpu.zeroFlag).toBe(true);
         });
     });
+
+    describe("0xA5 -> LDA zeropage", () => {
+        beforeEach(() => {
+            cpu.memory.readByte = jest.fn()
+        });
+
+        test("should load the correct value into the accumulator and update flags", () => {
+            const instruction = OPCODES[0xA5];
+
+            cpu.memory.readByte.mockReturnValue(0x80);
+            cpu.fetch = jest.fn(() => 0x42);
+
+            cpu.decode(instruction.code);
+
+            expect(instruction.code).toBe(0xA5);
+            expect(cpu.ACC).toBe(0x80);
+            expect(cpu.negativeFlag).toBe(true);
+            expect(cpu.zeroFlag).toBe(false);
+        });
+
+        test("should update zero flag correctly when loaded value is 0x00", () => {
+            const instruction = OPCODES[0xA5];
+
+            cpu.memory.readByte.mockReturnValue(0x00);
+            cpu.fetch = jest.fn(() => 0x42);
+            cpu.decode(instruction.code);
+
+            expect(instruction.code).toBe(0xA5);
+            expect(cpu.ACC).toBe(0x00);
+            expect(cpu.negativeFlag).toBe(false);
+            expect(cpu.zeroFlag).toBe(true);
+        });
+    });
     
     describe("0xA8 -> TAY", () => {
         test("decode", () => {
@@ -285,6 +318,93 @@ describe("OPCODES:", () => {
             expect(cpu.X).toBe(cpu.ACC);
             expect(cpu.negativeFlag).toBe(false);
             expect(cpu.zeroFlag).toBe(false);
+        });
+    });
+
+    describe("0xAD -> LDA absolute", () => {
+        beforeEach(() => {
+            cpu.memory.readByte = jest.fn()
+        });
+
+        test("should load the correct value into the accumulator from the absolute address and update flags", () => {
+            const instruction = OPCODES[0xAD];
+            // 16bit address 0x1234 and value 0x80
+            const lowByte = 0x34;
+            const highByte = 0x12;
+            const address = 0x1234;
+            cpu.memory.readByte.mockReturnValue(0x80);
+
+            cpu.fetch = jest.fn()
+                .mockReturnValueOnce(lowByte)
+                .mockReturnValueOnce(highByte);
+
+            cpu.decode(instruction.code);
+
+            expect(instruction.code).toBe(0xAD);
+            expect(cpu.memory.readByte).toHaveBeenCalledWith(address);
+            expect(cpu.ACC).toBe(0x80);
+            expect(cpu.negativeFlag).toBe(true);
+            expect(cpu.zeroFlag).toBe(false);
+        });
+
+        test("should correctly update zero flag when loaded value is 0x00", () => {
+            const instruction = OPCODES[0xAD];
+
+            const lowByte = 0x34;
+            const highByte = 0x12;
+            const address = 0x1234;
+            cpu.memory.readByte.mockReturnValue(0x00);
+
+            cpu.fetch = jest.fn()
+                .mockReturnValueOnce(lowByte)
+                .mockReturnValueOnce(highByte);
+
+            cpu.decode(instruction.code);
+
+            expect(instruction.code).toBe(0xAD);
+            expect(cpu.memory.readByte).toHaveBeenCalledWith(address);
+            expect(cpu.ACC).toBe(0x00);
+            expect(cpu.negativeFlag).toBe(false);
+            expect(cpu.zeroFlag).toBe(true);
+        });
+    });
+
+    describe("0xB5 -> LDA zeropage,X", () => {
+        beforeEach(() => {
+            cpu.memory.readByte = jest.fn()
+        });
+
+        test("should load the correct value into the accumulator with X offset and update flags", () => {
+            const instruction = OPCODES[0xB5];
+            cpu.X = 0x10; // value of address
+            const baseAddress = 0x42;
+            const expectedAddress = (baseAddress + cpu.X) & 0xFF;
+            cpu.memory.readByte.mockReturnValue(0x80);
+            cpu.fetch = jest.fn(() => baseAddress);
+            cpu.decode(instruction.code);
+
+            expect(instruction.code).toBe(0xB5);
+            expect(cpu.memory.readByte).toHaveBeenCalledWith(expectedAddress);
+            expect(cpu.ACC).toBe(0x80);
+            expect(cpu.negativeFlag).toBe(true);
+            expect(cpu.zeroFlag).toBe(false);
+        });
+
+        test("should correctly update zero flag when loaded value is 0x00", () => {
+            const instruction = OPCODES[0xB5];
+            cpu.X = 0x10;
+            const baseAddress = 0x42;
+            const expectedAddress = (baseAddress + cpu.X) & 0xFF;
+            cpu.memory.readByte.mockReturnValue(0x00);
+            cpu.fetch = jest.fn(() => baseAddress);
+
+            cpu.decode(instruction.code);
+
+            expect(instruction.code).toBe(0xB5);
+            expect(cpu.memory.readByte).toHaveBeenCalledWith(expectedAddress);
+            expect(cpu.ACC).toBe(0x00);
+            expect(cpu.negativeFlag).toBe(false);
+            expect(cpu.zeroFlag).toBe(true);
         });
     });
 

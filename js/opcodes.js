@@ -316,7 +316,17 @@ const OPCODES = {
     }, 
     0xA3: "", // lax("(d,x)") // illegal
     0xA4: "",
-    0xA5: "",
+    0xA5: {
+        name: "LDA zeropage", // Load Accumulator with Memory from Zeropage
+        t: 3,
+        code: 0xA5,
+        run: (cpu) => {
+            const address = cpu.fetch();
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xA6: "",
     0xA7: "", // illegal
     0xA8: {
@@ -351,7 +361,19 @@ const OPCODES = {
     },
     0xAB: "", // lax("#i") // illegal
     0xAC: "",
-    0xAD: "",
+    0xAD: {
+        name: "LDA absolute", // Load Accumulator Absolute
+        t: 4,
+        code: 0xAD,
+        run: (cpu) => {
+            const lowByte = cpu.fetch();
+            const highByte = cpu.fetch();
+            const address = (highByte << 8) | lowByte;
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xAE: "",
     0xAF: "", // lax("a") // illegal
     0xB0: "", // bcs("*+d")
@@ -359,7 +381,18 @@ const OPCODES = {
     0xB2: "", // stp_implied() // illegal
     0xB3: "", // lax("(d),y") // illegal
     0xB4: "",
-    0xB5: "",
+    0xB5: {
+        name: "LDA zeropage,X", // Load Accumulator with X-Indexed Zero Page
+        t: 4,
+        code: 0xB5,
+        run: (cpu) => {
+            const baseAddress = cpu.fetch();
+            const address = (baseAddress + cpu.X) & 0xFF;
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xB6: "",
     0xB7: "", // lax("d,y") // illegal
     0xB8: "", // clv_implied()
