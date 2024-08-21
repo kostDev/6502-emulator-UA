@@ -10,7 +10,20 @@ A minimalist and educational 6502 CPU emulator written in JavaScript. This proje
 	•	Memory Management: Includes basic read/write operations for memory handling.
 	•	Customizable: Designed with simplicity in mind, making it easy to extend and modify.
  	•	Testing: Covered with tests 11/151 OPCODES, which are official and documented guidelines. (in progress)
-  
+
+### 6502 Instructions by Category
+
+| Load | Trans | Stack | Shift | Logic | Arith | Inc | Ctrl | Bra | Flags | Nop |
+|------|-------|-------|-------|-------|-------|-----|------|-----|-------|-----|
+| LDA  | TAX   | PHA   | ASL   | AND   | ADC   | DEC | BRK  | BCC | CLC   | NOP |
+| LDX  | TAY   | PHP   | LSR   | BIT   | CMP   | DEX | JMP  | BCS | CLD   |     |
+| LDY  | TSX   | PLA   | ROL   | EOR   | CPX   | DEY | JSR  | BEQ | CLI   |     |
+| STA  | TXA   | PLP   | ROR   | ORA   | CPY   | INC | RTI  | BMI | CLV   |     |
+| STX  | TXS   |       |       |       | SBC   | INX | RTS  | BNE | SEC   |     |
+| STY  | TYA   |       |       |       |       | INY |      | BPL | SED   |     |
+|      |       |       |       |       |       |     |      | BVC | SEI   |     |
+|      |       |       |       |       |       |     |      | BVS |       |     |
+
 #### Installation
 
 Clone the repository and navigate to the project directory:
