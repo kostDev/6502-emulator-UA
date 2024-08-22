@@ -1,7 +1,7 @@
-### Opcodes in progress:
+### Opcodes progress by Instructions:
 
 <details>
-    <summary><b>Opcodes for <span style="color: orange">LDA</span></b></summary>
+    <summary><b>Opcodes for <span style="color: orange">LDA - Load Accumulator with Memory</span></b></summary>
 
 | Dec | Opcode |   Instruction    |    Mode    | Cycles | Status |
 |:---:|:------:|:----------------:|:----------:|:------:|:------:|
@@ -9,12 +9,22 @@
 | 165 |  0xA5  |   LDA zeropage   |  Zeropage  |   3    |   ✅️   |
 | 181 |  0xB5  |  LDA zeropage,X  | Zeropage,X |   4    |   ✅️   |
 | 173 |  0xAD  |   LDA absolute   |  Absolute  |   4    |   ✅    |
-| 189 |  0xBD  |  LDA absolute,X  | Absolute,X | 4 (+1) |   ❌    |
-| 185 |  0xB9  |  LDA absolute,Y  | Absolute,Y | 4 (+1) |   ❌    |
-| 161 |  0xA1  | LDA (indirect,X) | Indirect,X |   6    |   ❌    |
-| 177 |  0xB1  | LDA (indirect),Y | Indirect,Y | 5 (+1) |   ❌    |
+| 189 |  0xBD  |  LDA absolute,X  | Absolute,X | 4 (+1) |   ✅    |
+| 185 |  0xB9  |  LDA absolute,Y  | Absolute,Y | 4 (+1) |   ✅    |
+| 161 |  0xA1  | LDA (indirect,X) | Indirect,X |   6    |   ✅    |
+| 177 |  0xB1  | LDA (indirect),Y | Indirect,Y | 5 (+1) |   ✅    |
 
 </details>
+
+<details open>
+    <summary><b>Opcodes for <span style="color: orange">LDX - Load Index Register X From Memory</span></b></summary>
+
+
+
+</details>
+
+
+
 
 ### Opcodes (23/151)
 
@@ -35,7 +45,6 @@
 | 160 |  0xA0  | LDY #immediate |   ✅    |
 | 162 |  0xA2  | LDX #immediate |   ✅    |
 | 168 |  0xA8  |      TAY       |   ✅    |
-| 169 |  0xA9  | LDA #immediate |   ✅    |
 | 170 |  0xAA  |      TAX       |   ✅    |
 | 200 |  0xC8  |      INY       |   ✅    |
 | 202 |  0xCA  |      DEX       |   ✅    |
