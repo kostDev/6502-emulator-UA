@@ -19,7 +19,13 @@
 <details open>
     <summary><b>Opcodes for <span style="color: orange">LDX - Load Index Register X From Memory</span></b></summary>
 
-
+| Decimal | Opcode |    Mnemonic    | Addressing Mode | Cycles | Implemented |
+|:-------:|:------:|:--------------:|:---------------:|:------:|:-----------:|
+|   169   |  0xA2  | LDX #immediate |    Immediate    |   2    |      ✅      |
+|   181   |  0xA6  |  LDX zeropage  |    Zeropage     |   3    |             |
+|   197   |  0xB6  | LDX zeropage,Y |   Zeropage,Y    |   4    |             |
+|   173   |  0xAE  |  LDX absolute  |    Absolute     |   4    |             |
+|   189   |  0xBE  | LDX absolute,Y |   Absolute,Y    | 4 (+1) |             |
 
 </details>
 
