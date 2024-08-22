@@ -3,23 +3,23 @@
 <details>
     <summary><b>Opcodes for <span style="color: orange">LDA - Load Accumulator with Memory</span></b></summary>
 
-| Dec | Opcode |   Instruction    |    Mode    | Cycles | Status |
-|:---:|:------:|:----------------:|:----------:|:------:|:------:|
-| 169 |  0xA9  |  LDA #immediate  | Immediate  |   2    |   ✅️   |
-| 165 |  0xA5  |   LDA zeropage   |  Zeropage  |   3    |   ✅️   |
-| 181 |  0xB5  |  LDA zeropage,X  | Zeropage,X |   4    |   ✅️   |
-| 173 |  0xAD  |   LDA absolute   |  Absolute  |   4    |   ✅    |
-| 189 |  0xBD  |  LDA absolute,X  | Absolute,X | 4 (+1) |   ✅    |
-| 185 |  0xB9  |  LDA absolute,Y  | Absolute,Y | 4 (+1) |   ✅    |
-| 161 |  0xA1  | LDA (indirect,X) | Indirect,X |   6    |   ✅    |
-| 177 |  0xB1  | LDA (indirect),Y | Indirect,Y | 5 (+1) |   ✅    |
+| Dec | Opcode |   Instruction    | Addressing Mode | Cycles | Implemented |
+|:---:|:------:|:----------------:|:---------------:|:------:|:-----------:|
+| 169 |  0xA9  |  LDA #immediate  |    Immediate    |   2    |     ✅️      |
+| 165 |  0xA5  |   LDA zeropage   |    Zeropage     |   3    |     ✅️      |
+| 181 |  0xB5  |  LDA zeropage,X  |   Zeropage,X    |   4    |     ✅️      |
+| 173 |  0xAD  |   LDA absolute   |    Absolute     |   4    |      ✅      |
+| 189 |  0xBD  |  LDA absolute,X  |   Absolute,X    | 4 (+1) |      ✅      |
+| 185 |  0xB9  |  LDA absolute,Y  |   Absolute,Y    | 4 (+1) |      ✅      |
+| 161 |  0xA1  | LDA (indirect,X) |   Indirect,X    |   6    |      ✅      |
+| 177 |  0xB1  | LDA (indirect),Y |   Indirect,Y    | 5 (+1) |      ✅      |
 
 </details>
 
 <details open>
     <summary><b>Opcodes for <span style="color: orange">LDX - Load Index Register X From Memory</span></b></summary>
 
-| Decimal | Opcode |    Mnemonic    | Addressing Mode | Cycles | Implemented |
+| Decimal | Opcode |  Instruction   | Addressing Mode | Cycles | Implemented |
 |:-------:|:------:|:--------------:|:---------------:|:------:|:-----------:|
 |   169   |  0xA2  | LDX #immediate |    Immediate    |   2    |      ✅      |
 |   181   |  0xA6  |  LDX zeropage  |    Zeropage     |   3    |             |
@@ -28,7 +28,6 @@
 |   189   |  0xBE  | LDX absolute,Y |   Absolute,Y    | 4 (+1) |             |
 
 </details>
-
 
 
 
