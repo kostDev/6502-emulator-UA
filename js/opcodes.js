@@ -303,7 +303,21 @@ const OPCODES = {
             cpu.zeroFlag = cpu.Y;
         }
     },
-    0xA1: "",
+    0xA1: {
+        name: "LDA (indirect,X)", // Load Accumulator with Memory (Indirect Indexed Addressing with X)
+        t: 6, // Cycles required
+        code: 0xA1,
+        run: (cpu) => {
+            const baseAddress = (cpu.fetch() + cpu.X) & 0xFF; // 0x00-0xFF (zeropage)
+            const lowByte = cpu.memory.readByte(baseAddress);
+            const highByte = cpu.memory.readByte((baseAddress + 1) & 0xFF); // wrap around in zeropage
+            const address = (highByte << 8) | lowByte; // 16-bit address
+
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        },
+    },
     0xA2: {
         name: "LDX #immediate", // Load Index X with Memory
         t: 2,
@@ -316,7 +330,17 @@ const OPCODES = {
     }, 
     0xA3: "", // lax("(d,x)") // illegal
     0xA4: "",
-    0xA5: "",
+    0xA5: {
+        name: "LDA zeropage", // Load Accumulator with Memory from Zeropage
+        t: 3,
+        code: 0xA5,
+        run: (cpu) => {
+            const address = cpu.fetch();
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xA6: "",
     0xA7: "", // illegal
     0xA8: {
@@ -351,23 +375,100 @@ const OPCODES = {
     },
     0xAB: "", // lax("#i") // illegal
     0xAC: "",
-    0xAD: "",
+    0xAD: {
+        name: "LDA absolute", // Load Accumulator Absolute
+        t: 4,
+        code: 0xAD,
+        run: (cpu) => {
+            const lowByte = cpu.fetch();
+            const highByte = cpu.fetch();
+            const address = (highByte << 8) | lowByte;
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xAE: "",
     0xAF: "", // lax("a") // illegal
     0xB0: "", // bcs("*+d")
-    0xB1: "", // lda("(d),y")
+    0xB1: {
+        name: "LDA (indirect),Y", // Load Accumulator with Memory (Indirect) and Indexed Addressing with Y
+        t: 5, // 5 (+1)
+        code: 0xB1,
+        run: (cpu) => {
+            const baseAddress = cpu.fetch();
+            const lowByte = cpu.memory.readByte(baseAddress);
+            const highByte = cpu.memory.readByte((baseAddress + 1) & 0xFF); // wrap around in zeropage
+            const address = (highByte << 8) | lowByte + cpu.Y; // 16-bit address
+
+            // Check if the address crosses a page boundary
+            if ((address & 0xFF00) !== ((highByte << 8) & 0xFF00)) {
+                cpu.cycles += 1; // Add an extra cycle if a page boundary is crossed
+            }
+
+
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        },
+    },
     0xB2: "", // stp_implied() // illegal
     0xB3: "", // lax("(d),y") // illegal
     0xB4: "",
-    0xB5: "",
+    0xB5: {
+        name: "LDA zeropage,X", // Load Accumulator with X-Indexed Zero Page
+        t: 4,
+        code: 0xB5,
+        run: (cpu) => {
+            const baseAddress = cpu.fetch();
+            const address = (baseAddress + cpu.X) & 0xFF;
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xB6: "",
     0xB7: "", // lax("d,y") // illegal
     0xB8: "", // clv_implied()
-    0xB9: "", // lda("a,y")
+    0xB9: {
+        name: "LDA absolute,Y", // Load Accumulator with Memory (Absolute Addressing with Y offset)
+        t: 4, // 4 (+1)
+        code: 0xB9,
+        run: (cpu) => {
+            const lowByte = cpu.fetch();
+            const highByte = cpu.fetch();
+            const address = ((highByte << 8) | lowByte) + cpu.Y; // Combine bytes and add Y register value
+            // Check if address crosses a page boundary
+            if ((address & 0xFF00) !== ((highByte << 8) & 0xFF00)) {
+                cpu.cycles += 1; // Add an extra cycle if a page boundary is crossed
+            }
+
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xBA: "", // tsx_implied()
     0xBB: "", // las("a,y") // illegal
     0xBC: "", // ldy("a,x")
-    0xBD: "", // lda("a,x")
+    0xBD: {
+        name: "LDA absolute,X", // Load Accumulator with Memory (Absolute Addressing with X offset)
+        t: 4, // 4 (+1)
+        code: 0xBD,
+        run: (cpu) => {
+            const lowByte = cpu.fetch();
+            const highByte = cpu.fetch();
+            const address = ((highByte << 8) | lowByte) + cpu.X; // Combine bytes and add X register value
+            // Check if address crosses a page boundary
+            if ((address & 0xFF00) !== ((highByte << 8) & 0xFF00)) {
+                cpu.cycles += 1; // Add an extra cycle if a page boundary is crossed
+            }
+
+            cpu.ACC = cpu.memory.readByte(address);
+            cpu.negativeFlag = cpu.ACC;
+            cpu.zeroFlag = cpu.ACC;
+        }
+    },
     0xBE: "", // ldx("a,y")
     0xBF: "", // lax("a,y") // illegal
     0xC0: "", // cpy("#i")
